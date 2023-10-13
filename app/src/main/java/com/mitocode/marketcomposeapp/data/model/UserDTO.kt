@@ -2,13 +2,6 @@ package com.mitocode.marketcomposeapp.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginDTO(
-    val success: Boolean,
-    val message: String,
-    val data: UserDTO?,
-    val token: String
-)
-
 data class UserDTO(
     val uuid: String,
 
