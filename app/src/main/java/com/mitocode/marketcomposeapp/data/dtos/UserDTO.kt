@@ -1,4 +1,4 @@
-package com.mitocode.marketcomposeapp.data.model
+package com.mitocode.marketcomposeapp.data.dtos
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,11 +11,18 @@ data class UserDTO(
     @SerializedName("apellidos")
     val Lastname: String,
 
-    val email: String,
+    @SerializedName("email")
+    val Email: String,
 
     @SerializedName("celular")
     val Phone: String,
-    val genero: String,
-    val nroDoc: String,
-    val tipo: String
+
+    @SerializedName("genero")
+    val Gender: String,
+
+    @SerializedName("nroDoc")
+    val Id: String,
+
+    @SerializedName("tipo")
+    val Type: String
 )

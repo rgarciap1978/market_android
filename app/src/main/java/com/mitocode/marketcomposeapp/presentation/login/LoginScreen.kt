@@ -1,5 +1,6 @@
 package com.mitocode.marketcomposeapp.presentation.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -12,21 +13,26 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -35,31 +41,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.*
 import com.mitocode.marketcomposeapp.R
-import com.mitocode.marketcomposeapp.presentation.common.BasicImageComponent
-import com.mitocode.marketcomposeapp.presentation.common.RoundedButtonComponent
+import com.mitocode.marketcomposeapp.domain.models.User
+import com.mitocode.marketcomposeapp.domain.states.GenericState
+import com.mitocode.marketcomposeapp.presentation.component.BasicImageComponent
+import com.mitocode.marketcomposeapp.presentation.component.RoundedButtonComponent
 import com.mitocode.marketcomposeapp.util.DefaultPreview
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(),
+    onLogin: () -> Unit
 ) {
 
     val state = viewModel.state
+    val stateElement = viewModel.stateElements
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         LoginHeader()
-        LoginBody(viewModel)
+        LoginBody(viewModel, stateElement, state)
 
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        }
+        LaunchedEffect(key1 = state.successful, key2 = state.error) {
+            if (state.successful != null) {
+                onLogin()
+            }
 
-        if (state.successfull != null) {
-            println(state.successfull.Firstname)
-        }
+            if (state.error != null) {
+                Toast.makeText(context, state.error, Toast.LENGTH_LONG).show()
+            }
 
-        if(state.error != null){
-            println(state.error)
+            viewModel.resetStateError()
         }
     }
 }
@@ -110,7 +121,14 @@ fun ColumnScope.LoginHeader() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
+fun ColumnScope.LoginBody(
+    viewModel: LoginViewModel,
+    stateElements: LoginElements,
+    state: GenericState<User>
+) {
+
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,10 +139,12 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = stateElements.email,
+            onValueChange = {
+                viewModel.onEvent(LoginFormEvent.EmailChange(it))
+            },
             placeholder = {
-                Text(text = "Enter your email")
+                Text(text = "Enter your Email")
             },
             trailingIcon = {
                 IconButton(onClick = { /*TODO*/ }) {
@@ -140,7 +160,9 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
-                onNext = {}
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
             )
         )
 
@@ -148,15 +170,22 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = stateElements.password,
+            onValueChange = {
+                viewModel.onEvent(LoginFormEvent.PasswordChange(it))
+            },
             placeholder = {
                 Text(text = "Enter your password")
             },
             trailingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    viewModel.onEvent(LoginFormEvent.VisualTransformationChange(!stateElements.visualTransformation))
+                }) {
                     Icon(
-                        imageVector = Icons.Filled.VisibilityOff,
+                        imageVector = if (stateElements.visualTransformation)
+                            Icons.Filled.Visibility
+                        else
+                            Icons.Filled.VisibilityOff,
                         contentDescription = "Clear"
                     )
                 }
@@ -167,9 +196,15 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {}
+                onDone = {
+                    focusManager.clearFocus()
+                }
             ),
-            visualTransformation = VisualTransformation.None
+            visualTransformation = if (stateElements.visualTransformation) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -181,7 +216,8 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
             title = "Sign In",
             onClick = {
                 viewModel.onEvent(LoginFormEvent.Submit)
-            }
+            },
+            displayProgressBar = state.isLoading
         )
 
         Text(
@@ -213,5 +249,5 @@ fun ColumnScope.LoginBody(viewModel: LoginViewModel) {
 @DefaultPreview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen() {}
 }

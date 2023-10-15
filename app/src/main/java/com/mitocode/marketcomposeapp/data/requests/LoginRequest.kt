@@ -1,4 +1,4 @@
-package com.mitocode.marketcomposeapp.data.model
+package com.mitocode.marketcomposeapp.data.requests
 
 data class LoginRequest(
     val email: String,

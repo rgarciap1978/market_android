@@ -6,9 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.model.LoginRequest
-import com.mitocode.marketcomposeapp.data.repository.UserRepository
-import com.mitocode.marketcomposeapp.domain.repository.IUserPrepository
+import com.mitocode.marketcomposeapp.data.repositories.UserRepository
+import com.mitocode.marketcomposeapp.data.repositories.interfaces.IUserRepository
+import com.mitocode.marketcomposeapp.data.requests.LoginRequest
+import com.mitocode.marketcomposeapp.domain.mappers.toUser
+import com.mitocode.marketcomposeapp.domain.models.User
+import com.mitocode.marketcomposeapp.domain.states.GenericState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -16,49 +19,67 @@ import kotlinx.coroutines.launch
 class LoginViewModel : ViewModel() {
 
     // STATE SCREEN
-    var state by mutableStateOf(LoginState())
+    var state by mutableStateOf(GenericState<User>())
 
     // STATE UI
     var stateElements by mutableStateOf(LoginElements())
 
     // EVENTS
-    fun onEvent(event: LoginFormEvent){
-        when(event){
+    fun onEvent(event: LoginFormEvent) {
+        when (event) {
             is LoginFormEvent.EmailChange -> {
-                TODO()
+                stateElements = stateElements.copy(email = event.email)
             }
+
             is LoginFormEvent.PasswordChange -> {
-                TODO()
+                stateElements = stateElements.copy(password = event.password)
             }
+
             LoginFormEvent.Submit -> {
                 singIn()
             }
+
             is LoginFormEvent.VisualTransformationChange -> {
-                TODO()
+                stateElements =
+                    stateElements.copy(visualTransformation = event.visualTransformation)
             }
         }
     }
 
     private fun singIn() {
 
-        val userRepository:IUserPrepository = UserRepository()
+        val userRepository: IUserRepository = UserRepository()
         viewModelScope.launch {
             userRepository
-                .signIn(LoginRequest("jledesma2509@gmail.com", "12345"))
+                .signIn(LoginRequest(stateElements.email, stateElements.password))
                 .onEach {
-                    when(it){
+                    when (it) {
                         is Result.Error -> {
-                            TODO()
+                            state =
+                                state.copy(
+                                    error = it.message,
+                                    isLoading = false,
+                                    successful = null
+                                )
                         }
+
                         is Result.Loading -> {
                             state = state.copy(isLoading = true)
                         }
+
                         is Result.Successfull -> {
-                            state = state.copy(successfull = it.data, isLoading = false)
+                            state = state.copy(
+                                successful = it.data?.toUser(),
+                                isLoading = false,
+                                error = null
+                            )
                         }
                     }
                 }.launchIn(viewModelScope)
         }
+    }
 
+    fun resetStateError() {
+        state = state.copy(successful = null, error = null)
     }
 }
