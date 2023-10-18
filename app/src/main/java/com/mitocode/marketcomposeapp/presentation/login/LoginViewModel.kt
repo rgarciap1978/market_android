@@ -9,7 +9,6 @@ import com.mitocode.marketcomposeapp.core.Result
 import com.mitocode.marketcomposeapp.data.repositories.UserRepository
 import com.mitocode.marketcomposeapp.data.repositories.interfaces.IUserRepository
 import com.mitocode.marketcomposeapp.data.requests.LoginRequest
-import com.mitocode.marketcomposeapp.domain.mappers.toUser
 import com.mitocode.marketcomposeapp.domain.models.User
 import com.mitocode.marketcomposeapp.domain.states.GenericState
 import kotlinx.coroutines.flow.launchIn
@@ -49,6 +48,7 @@ class LoginViewModel : ViewModel() {
     private fun singIn() {
 
         val userRepository: IUserRepository = UserRepository()
+
         viewModelScope.launch {
             userRepository
                 .signIn(LoginRequest(stateElements.email, stateElements.password))
@@ -67,9 +67,9 @@ class LoginViewModel : ViewModel() {
                             state = state.copy(isLoading = true)
                         }
 
-                        is Result.Successfull -> {
+                        is Result.Successful -> {
                             state = state.copy(
-                                successful = it.data?.toUser(),
+                                successful = it.data,
                                 isLoading = false,
                                 error = null
                             )

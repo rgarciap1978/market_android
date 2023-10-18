@@ -1,9 +1,9 @@
 package com.mitocode.marketcomposeapp.data.repositories.interfaces
 
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.dtos.CategoryDTO
+import com.mitocode.marketcomposeapp.domain.models.Category
 import kotlinx.coroutines.flow.Flow
 
 interface ICategoryRepository {
-    suspend fun GetCategory() : Flow<Result<CategoryDTO>>
+    suspend fun populateCategories() : Flow<Result<List<Category>>>
 }

@@ -3,7 +3,8 @@ package com.mitocode.marketcomposeapp.presentation.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.InsertEmoticon
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.NotificationImportant
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,9 +21,12 @@ import com.mitocode.marketcomposeapp.ui.theme.PrimaryLight
 @Composable
 fun AppBarComponent(
     modifier: Modifier = Modifier,
-    title: String
+    title: String,
+    onItemClick: () -> Unit,
+    onPopClick: ()->Unit
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             Text(
                 text = title,
@@ -35,11 +39,22 @@ fun AppBarComponent(
         ),
         actions = {
             Icon(
-                imageVector = Icons.Filled.InsertEmoticon,
+                imageVector = Icons.Filled.Info,
                 contentDescription = "Information",
                 modifier = Modifier
                     .padding(end = 4.dp)
-                    .clickable { }
+                    .clickable {
+                        onItemClick()
+                    }
+            )
+            Icon(
+                imageVector = Icons.Filled.NotificationImportant,
+                contentDescription = "Notify",
+                modifier = Modifier
+                    .padding(end = 4.dp)
+                    .clickable {
+                        onPopClick()
+                    }
             )
         })
 }
