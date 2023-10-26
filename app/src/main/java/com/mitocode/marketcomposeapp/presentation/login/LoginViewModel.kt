@@ -6,16 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.repositories.UserRepository
 import com.mitocode.marketcomposeapp.data.repositories.interfaces.IUserRepository
 import com.mitocode.marketcomposeapp.data.requests.LoginRequest
 import com.mitocode.marketcomposeapp.domain.models.User
 import com.mitocode.marketcomposeapp.domain.states.GenericState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    val userRepository: IUserRepository
+) : ViewModel() {
 
     // STATE SCREEN
     var state by mutableStateOf(GenericState<User>())
@@ -46,8 +50,6 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun singIn() {
-
-        val userRepository: IUserRepository = UserRepository()
 
         viewModelScope.launch {
             userRepository

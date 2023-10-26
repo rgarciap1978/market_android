@@ -18,13 +18,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.mitocode.marketcomposeapp.domain.models.Category
 import com.mitocode.marketcomposeapp.presentation.component.ItemCategoryComponent
 
 @Composable
 fun CategoryScreen(
-    viewModel: CategoryViewModel = viewModel(),
-    padding: PaddingValues
+    viewModel: CategoryViewModel = hiltViewModel(),
+    padding: PaddingValues,
+    onClick: (Category) -> Unit
 ) {
     val state = viewModel.state
 
@@ -60,7 +62,12 @@ fun CategoryScreen(
                             .fillMaxSize()
                             .background(Color.Green)
                     ) {
-                        ItemCategoryComponent(data = it)
+                        ItemCategoryComponent(
+                            data = it,
+                            onClick = {
+                                onClick(it)
+                            }
+                        )
                     }
                 }
             }

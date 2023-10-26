@@ -22,14 +22,15 @@ import com.mitocode.marketcomposeapp.ui.theme.Black
 @Composable
 fun ItemCategoryComponent(
     modifier: Modifier = Modifier,
-    data: Category
+    data: Category,
+    onClick: (Category) -> Unit
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(100.dp)
             .clickable {
-
+                onClick(data)
             },
         border = BorderStroke(1.dp, Black),
         elevation = CardDefaults.cardElevation(

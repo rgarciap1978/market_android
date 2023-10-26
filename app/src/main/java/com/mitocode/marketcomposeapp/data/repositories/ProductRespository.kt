@@ -2,36 +2,33 @@ package com.mitocode.marketcomposeapp.data.repositories
 
 import android.content.SharedPreferences
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.repositories.interfaces.ICategoryRepository
-import com.mitocode.marketcomposeapp.domain.mappers.toList
-import com.mitocode.marketcomposeapp.domain.models.Category
+import com.mitocode.marketcomposeapp.data.repositories.interfaces.IProductRepository
+import com.mitocode.marketcomposeapp.domain.models.Product
 import com.mitocode.marketcomposeapp.services.IService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
-class CategoryRepository @Inject constructor(
+class ProductRespository @Inject constructor(
     val sharedPreferences: SharedPreferences,
     val service: IService
-) : ICategoryRepository {
-
-    override suspend fun getAll(): Flow<Result<List<Category>>> = flow {
-        try {
+) : IProductRepository {
+    override suspend fun findById(id: String): Flow<Result<List<Product>>> = flow {
+        /*try {
             emit(Result.Loading())
-            val response = service.getAll()
+            val response = service.findById(id)
             if (response.success) {
-                emit(Result.Successful(data = response.data.toList()))
+                var data = response.data
             } else {
                 emit(Result.Error(message = response.message))
             }
         } catch (ex: HttpException) {
-            emit(Result.Error(message = "Encontramos un error en tu solicitud: ${ex.message()}"))
+            emit(Result.Error(message = "Encontramos un error en tu solicitud"))
         } catch (ex: IOException) {
             emit(Result.Error(message = "No se pudo conectar al servidor"))
         } catch (ex: Exception) {
             emit(Result.Error(message = ex.message.toString()))
-        }
+        }*/
     }
+
 }

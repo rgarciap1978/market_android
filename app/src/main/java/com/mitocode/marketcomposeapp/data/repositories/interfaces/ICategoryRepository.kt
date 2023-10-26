@@ -5,5 +5,5 @@ import com.mitocode.marketcomposeapp.domain.models.Category
 import kotlinx.coroutines.flow.Flow
 
 interface ICategoryRepository {
-    suspend fun populateCategories() : Flow<Result<List<Category>>>
+    suspend fun getAll() : Flow<Result<List<Category>>>
 }

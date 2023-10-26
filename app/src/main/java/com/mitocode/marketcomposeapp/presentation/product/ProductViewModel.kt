@@ -1,4 +1,4 @@
-package com.mitocode.marketcomposeapp.presentation.category
+package com.mitocode.marketcomposeapp.presentation.product
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,38 +6,24 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.repositories.interfaces.ICategoryRepository
-import com.mitocode.marketcomposeapp.domain.models.Category
+import com.mitocode.marketcomposeapp.data.repositories.interfaces.IProductRepository
+import com.mitocode.marketcomposeapp.domain.models.Product
 import com.mitocode.marketcomposeapp.domain.states.GenericListState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class CategoryViewModel @Inject constructor(
-    val categoryRepository: ICategoryRepository
+class ProductViewModel @Inject constructor(
+    private val repository: IProductRepository
 ) : ViewModel() {
 
-    var state by mutableStateOf(GenericListState<Category>())
+    private var state by mutableStateOf(GenericListState<Product>())
 
-    init {
-        onEvent(CategoryFromEvent.PopulateCategories)
-    }
-    private fun onEvent(event: CategoryFromEvent) {
-        when (event) {
-            CategoryFromEvent.PopulateCategories -> {
-                populateCategories()
-            }
-        }
-    }
-
-    private fun populateCategories() {
+    fun getProducts(id: String) {
 
         viewModelScope.launch {
-            categoryRepository.getAll().onEach {
-
+            repository.findById(id).onEach {
                 when (it) {
                     is Result.Error -> {
                         state = state.copy(
@@ -57,7 +43,6 @@ class CategoryViewModel @Inject constructor(
                         )
                     }
                 }
-
             }.launchIn(viewModelScope)
         }
     }

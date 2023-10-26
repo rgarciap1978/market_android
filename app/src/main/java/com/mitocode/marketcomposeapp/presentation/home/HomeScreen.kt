@@ -98,9 +98,11 @@ fun HomeScreen() {
         Scaffold(
             topBar = {
                 AppBarComponent(
-                    title = "La tiendita",
+                    title = "Market Fresh",
+                    navController = navController,
                     onItemClick = { openDialog = true },
-                    onPopClick = { openDialogCustom = true }
+                    onPopClick = { openDialogCustom = true },
+                    onBackClick = { navController.popBackStack() }
                 )
             },
             floatingActionButton = {
