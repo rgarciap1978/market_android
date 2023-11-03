@@ -1,4 +1,4 @@
-package com.mitocode.marketcomposeapp.data.dtos
+package com.mitocode.marketcomposeapp.data.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -11,7 +11,7 @@ data class ProductDTO(
     @SerializedName("caracteristicas")
     val feature: String,
     @SerializedName("precio")
-    val price: Int,
+    val price: Double,
     @SerializedName("stock")
     val stock: Int,
     @SerializedName("imagenes")

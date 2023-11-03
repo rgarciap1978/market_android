@@ -1,6 +1,6 @@
 package com.mitocode.marketcomposeapp.domain.mappers
 
-import com.mitocode.marketcomposeapp.data.dtos.UserDTO
+import com.mitocode.marketcomposeapp.data.dto.UserDTO
 import com.mitocode.marketcomposeapp.domain.models.User
 
 fun UserDTO.toUser(): User {

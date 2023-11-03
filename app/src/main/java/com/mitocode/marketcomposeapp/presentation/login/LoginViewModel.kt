@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mitocode.marketcomposeapp.core.Result
-import com.mitocode.marketcomposeapp.data.repositories.interfaces.IUserRepository
 import com.mitocode.marketcomposeapp.data.requests.LoginRequest
 import com.mitocode.marketcomposeapp.domain.models.User
 import com.mitocode.marketcomposeapp.domain.states.GenericState
+import com.mitocode.marketcomposeapp.repositories.interfaces.IUserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

@@ -1,4 +1,4 @@
-package com.mitocode.marketcomposeapp.data.repositories.interfaces
+package com.mitocode.marketcomposeapp.repositories.interfaces
 
 import com.mitocode.marketcomposeapp.core.Result
 import com.mitocode.marketcomposeapp.data.requests.LoginRequest

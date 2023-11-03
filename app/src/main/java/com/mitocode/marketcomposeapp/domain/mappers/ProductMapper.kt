@@ -1,6 +1,6 @@
 package com.mitocode.marketcomposeapp.domain.mappers
 
-import com.mitocode.marketcomposeapp.data.dtos.ProductDTO
+import com.mitocode.marketcomposeapp.data.dto.ProductDTO
 import com.mitocode.marketcomposeapp.domain.models.Product
 
 fun List<ProductDTO>.toList(): List<Product> = map {

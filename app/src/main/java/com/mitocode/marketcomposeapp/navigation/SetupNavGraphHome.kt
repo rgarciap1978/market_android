@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.mitocode.marketcomposeapp.presentation.category.CategoryScreen
 import com.mitocode.marketcomposeapp.presentation.locate.LocateScreen
 import com.mitocode.marketcomposeapp.presentation.product.ProductScreen
-import com.mitocode.marketcomposeapp.presentation.setting.SettingScreen
+import com.mitocode.marketcomposeapp.presentation.setting.SettingCameraXScreen
 
 @Composable
 fun SetupNavGraphHome(
@@ -32,7 +32,8 @@ fun SetupNavGraphHome(
         }
 
         composable(route = ScreenHome.Setting.route) {
-            SettingScreen(padding)
+            //SettingScreen(padding)
+            SettingCameraXScreen(padding)
         }
 
         composable(
@@ -45,7 +46,7 @@ fun SetupNavGraphHome(
             requireNotNull(uuid)
             ProductScreen(
                 uuid = uuid,
-                paddingValues = padding
+                padding = padding
             )
         }
     }
