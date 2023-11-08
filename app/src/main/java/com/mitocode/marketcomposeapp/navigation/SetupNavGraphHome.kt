@@ -34,6 +34,7 @@ fun SetupNavGraphHome(
         composable(route = ScreenHome.Setting.route) {
             //SettingScreen(padding)
             SettingCameraXScreen(padding)
+
         }
 
         composable(

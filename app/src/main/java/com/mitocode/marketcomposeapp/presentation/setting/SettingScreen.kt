@@ -6,14 +6,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,18 +44,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.mitocode.marketcomposeapp.presentation.component.CameraXComponent
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.Executor
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,24 +85,22 @@ fun SettingScreen(padding: PaddingValues) {
     ) {
         when {
             it -> {
-                cameraPhotoLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+                cameraPhotoLauncher.launch(
+                    Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                )
             }
 
             else -> {
                 println("Permiso denegado")
             }
-
         }
     }
-
-
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding)
     ) {
-
         Column {
             Row(
                 modifier = Modifier
@@ -122,6 +116,7 @@ fun SettingScreen(padding: PaddingValues) {
                     onValueChange = {}
                 )
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +132,9 @@ fun SettingScreen(padding: PaddingValues) {
                 ) {
                     Text(text = "Camara")
                 }
+
                 Spacer(modifier = Modifier.width(8.dp))
+
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -173,7 +170,6 @@ fun SettingScreen(padding: PaddingValues) {
 
 
         }
-
     }
 }
 
@@ -208,7 +204,9 @@ fun SettingCameraXScreen(padding: PaddingValues) {
         mutableStateOf<Uri?>(null)
     }
 
-    val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.CAMERA
+    )
 
     LaunchedEffect(key1 = true) {
         permissionState.launchPermissionRequest()
@@ -230,7 +228,7 @@ fun SettingCameraXScreen(padding: PaddingValues) {
 
     if (permission) {
         if (permissionState.status.isGranted) {
-            CameraX(
+            CameraXComponent(
                 cameraController = cameraController,
                 lifecycle = lifecycle,
                 visibilityComponents = visibilityComponents
@@ -349,10 +347,7 @@ fun SettingCameraXScreen(padding: PaddingValues) {
                     )
                 }
             }
-
-
         }
-
     }
 }
 
@@ -381,30 +376,4 @@ fun takePicture(
 
         }
     )
-}
-
-@Composable
-fun CameraX(
-    modifier: Modifier = Modifier,
-    cameraController: LifecycleCameraController,
-    lifecycle: LifecycleOwner,
-    visibilityComponents: Boolean
-) {
-
-    cameraController.bindToLifecycle(lifecycle)
-
-    if (!visibilityComponents) {
-        AndroidView(
-            modifier = modifier,
-            factory = {
-                val previewView = PreviewView(it).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                }
-                previewView.controller = cameraController
-                previewView
-            })
-    }
 }

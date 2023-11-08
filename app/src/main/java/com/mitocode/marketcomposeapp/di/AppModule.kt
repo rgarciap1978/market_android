@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.mitocode.marketcomposeapp.BuildConfig
+import com.mitocode.marketcomposeapp.core.BasicInterceptor
 import com.mitocode.marketcomposeapp.localdb.AppDatabase
 import com.mitocode.marketcomposeapp.localdb.dao.ICategoryDAO
 import com.mitocode.marketcomposeapp.repositories.CategoryRepository
@@ -14,7 +16,6 @@ import com.mitocode.marketcomposeapp.repositories.interfaces.ICategoryRepository
 import com.mitocode.marketcomposeapp.repositories.interfaces.IProductRepository
 import com.mitocode.marketcomposeapp.repositories.interfaces.IUserRepository
 import com.mitocode.marketcomposeapp.services.IService
-import com.mitocode.marketcomposeapp.services.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,26 +76,23 @@ object AppModule {
     }
 
     @Provides
-    fun provideRetrofit(): IService {
-        val url = "http://35.169.242.154:3000/"
-        val token = TokenManager.getToken()
-
-        var client = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val original = chain.request()
-                val request = original.newBuilder()
-                    .header("Authorization", "Bearer " + token)
-                    .method(original.method, original.body)
-                    .build()
-                chain.proceed(request)
-            }
+    @Singleton
+    fun provideBasicInterceptor(): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addInterceptor(BasicInterceptor())
             .build()
+    }
 
+    @Provides
+    @Singleton
+    fun provideRetrofit(httpClient: OkHttpClient): IService {
         return Retrofit
             .Builder()
-            .baseUrl(url)
+            //.baseUrl(Constants.URL_BASE)
+            .baseUrl(BuildConfig.URL_BASE)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(httpClient)
             .build()
             .create()
     }

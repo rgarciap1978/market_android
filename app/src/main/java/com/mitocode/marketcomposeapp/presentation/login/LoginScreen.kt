@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,22 +42,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.*
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.mitocode.marketcomposeapp.R
 import com.mitocode.marketcomposeapp.domain.models.User
 import com.mitocode.marketcomposeapp.domain.states.GenericState
 import com.mitocode.marketcomposeapp.presentation.component.BasicImageComponent
 import com.mitocode.marketcomposeapp.presentation.component.RoundedButtonComponent
 import com.mitocode.marketcomposeapp.util.DefaultPreview
+import com.mitocode.marketcomposeapp.worker.MyWorker
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
-    onLogin: () -> Unit
+    viewModel: LoginViewModel = hiltViewModel(), onLogin: () -> Unit
 ) {
 
     val state = viewModel.state
     val stateElement = viewModel.stateElements
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+
+        val uploadWorkRequest: WorkRequest =
+        // EJECUTA UNA SOLA VEZ
+        //    OneTimeWorkRequestBuilder<MyWorker>()
+            // EJECUTA CADA 15 MIN
+            PeriodicWorkRequestBuilder<MyWorker>(
+                15,
+                TimeUnit.MINUTES
+            ).build()
+
+        WorkManager.getInstance(context).enqueue(uploadWorkRequest)
+
+
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         LoginHeader()
@@ -99,7 +120,7 @@ fun ColumnScope.LoginHeader() {
         )
 
         Text(
-            text = "Bienvenidos",
+            text = stringResource(R.string.welcome),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
@@ -123,9 +144,7 @@ fun ColumnScope.LoginHeader() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColumnScope.LoginBody(
-    viewModel: LoginViewModel,
-    stateElements: LoginElements,
-    state: GenericState<User>
+    viewModel: LoginViewModel, stateElements: LoginElements, state: GenericState<User>
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -150,21 +169,17 @@ fun ColumnScope.LoginBody(
             trailingIcon = {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "Clear"
+                        imageVector = Icons.Filled.Clear, contentDescription = "Clear"
                     )
                 }
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                imeAction = ImeAction.Next
+                capitalization = KeyboardCapitalization.None, imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }
-            )
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            })
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -183,24 +198,18 @@ fun ColumnScope.LoginBody(
                     viewModel.onEvent(LoginFormEvent.VisualTransformationChange(!stateElements.visualTransformation))
                 }) {
                     Icon(
-                        imageVector = if (stateElements.visualTransformation)
-                            Icons.Filled.Visibility
-                        else
-                            Icons.Filled.VisibilityOff,
-                        contentDescription = "Clear"
+                        imageVector = if (stateElements.visualTransformation) Icons.Filled.Visibility
+                        else Icons.Filled.VisibilityOff, contentDescription = "Clear"
                     )
                 }
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                imeAction = ImeAction.Done
+                capitalization = KeyboardCapitalization.None, imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            }),
             visualTransformation = if (stateElements.visualTransformation) {
                 VisualTransformation.None
             } else {
@@ -213,28 +222,22 @@ fun ColumnScope.LoginBody(
         RoundedButtonComponent(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp),
-            title = "Sign In",
-            onClick = {
+                .height(40.dp), title = "Sign In", onClick = {
                 viewModel.onEvent(LoginFormEvent.Submit)
-            },
-            displayProgressBar = state.isLoading
+            }, displayProgressBar = state.isLoading
         )
 
         Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = buildAnnotatedString {
+            modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
                 append("¿Aún no te has registrado?")
                 withStyle(
                     style = SpanStyle(
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold
+                        textDecoration = TextDecoration.Underline, fontWeight = FontWeight.Bold
                     )
                 ) {
                     append(" Registrate")
                 }
-            },
-            textAlign = TextAlign.Center
+            }, textAlign = TextAlign.Center
         )
 
         Text(

@@ -24,11 +24,21 @@ android {
 
     buildTypes {
         release {
+            buildConfigField(
+                "String", "URL_BASE", "\"http://35.169.242.154:3000/\""
+            )
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        debug {
+            buildConfigField(
+                "String", "URL_BASE", "\"http://35.169.242.154:3000/\""
+            )
+            resValue("string", "title", "Debug")
         }
     }
     compileOptions {
@@ -40,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -79,15 +90,17 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.2.0")
 
     // Retrofil
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    val retrofil_version = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofil_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofil_version")
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.0.0")
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    val hilt_version = "2.44"
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0-beta01")
 
@@ -95,20 +108,45 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0-alpha02")
 
     //Room
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
-    implementation("androidx.room:room-ktx:2.5.0")
+    val room_version = "2.5.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
     //Permission
     implementation("com.google.accompanist:accompanist-permissions:0.29.1-alpha")
 
     //CameraX
-    implementation("androidx.camera:camera-view:1.3.0")
-    implementation("androidx.camera:camera-camera2:1.3.0")
-    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    val camerax_version = "1.3.0"
+    implementation("androidx.camera:camera-view:$camerax_version")
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
 
     //Google Maps
     implementation("com.google.maps.android:maps-compose:1.0.0")
     implementation("com.google.android.gms:play-services-maps:18.0.2")
 
+    // Work Manager
+    val work_version = "2.7.1"
+
+    // Kotlin + coroutines
+    implementation("androidx.work:work-runtime-ktx:$work_version")
+
+    // optional - RxJava2 support
+    implementation("androidx.work:work-rxjava2:$work_version")
+
+    // optional - GCMNetworkManager support
+    implementation("androidx.work:work-gcm:$work_version")
+
+    // optional - Test helpers
+    androidTestImplementation("androidx.work:work-testing:$work_version")
+
+    // optional - Multiprocess support
+    implementation("androidx.work:work-multiprocess:$work_version")
+    
+    //Hilt-WorkManager
+    implementation("androidx.hilt:hilt-work:1.0.0")
+
+    //jwtdecode
+    implementation("com.auth0.android:jwtdecode:2.0.1")
 }
