@@ -7,5 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface IUserRepository {
-    suspend fun signIn(request: LoginRequest) : Flow<Result<User>>
+    suspend fun signIn(request: LoginRequest): Flow<Result<User>>
+
+    suspend fun refreshToken(): Boolean
 }

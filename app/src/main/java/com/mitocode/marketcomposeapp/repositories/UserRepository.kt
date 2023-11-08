@@ -48,4 +48,19 @@ class UserRepository @Inject constructor(
             println(ex.message.toString())
         }
     }
+
+    override suspend fun refreshToken(): Boolean {
+        return try {
+            val response = service.refreshToken()
+            if (response.success) {
+                TokenManager.setToken(response.token)
+                println("Renovación del Token")
+                true
+            } else {
+                false
+            }
+        } catch (ex: Exception) {
+            false
+        }
+    }
 }

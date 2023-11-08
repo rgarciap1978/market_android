@@ -15,6 +15,9 @@ interface IService {
     @POST("api/usuarios/login")
     suspend fun signIn(@Body request: LoginRequest): GenericResponse<UserDTO>
 
+    @POST("api/usuarios/renueva-token")
+    suspend fun refreshToken(): GenericResponse<UserDTO>
+
     @GET("api/categorias")
     suspend fun getAll(): GenericListResponse<CategoryDTO>
 

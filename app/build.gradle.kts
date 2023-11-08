@@ -98,10 +98,13 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.0.0")
 
     // Dagger - Hilt
-    val hilt_version = "2.44"
-    implementation("com.google.dagger:hilt-android:$hilt_version")
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    val daggerHilt_version = "2.44"
+    implementation("com.google.dagger:hilt-android:$daggerHilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$daggerHilt_version")
+
+    val hilt_version = "1.0.0"
+    kapt("androidx.hilt:hilt-compiler:$hilt_version")
+    implementation("androidx.hilt:hilt-common:$hilt_version")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0-beta01")
 
     //Security Crypto - SharedPreferences
@@ -143,7 +146,7 @@ dependencies {
 
     // optional - Multiprocess support
     implementation("androidx.work:work-multiprocess:$work_version")
-    
+
     //Hilt-WorkManager
     implementation("androidx.hilt:hilt-work:1.0.0")
 
